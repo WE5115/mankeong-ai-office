@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>MANKEONG AI OFFICE</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#081426;color:#eef5ff;font-family:Arial,sans-serif}
+
+header{padding:22px;background:#10233b;border-bottom:1px solid #34506e}
+
+h1{font-size:20px;margin:0}
+
+header p{color:#9db5d0;font-size:12px}
+
+main{padding:14px;max-width:750px;margin:auto}
+
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+
+button{background:#193552;color:white;border:1px solid #42617e;border-radius:12px;padding:12px 6px;font-weight:bold}
+
+button.active{background:#2365a0}
+
+section{display:none;margin-top:18px}
+
+section.active{display:block}
+
+.panel{background:#142943;border:1px solid #34506e;border-radius:17px;padding:17px;margin:12px 0}
+
+h2{font-size:21px}
+
+.scene{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+
+.desk{background:#203d5d;border:1px solid #54718e;border-radius:13px;padding:15px;text-align:center}
+
+.desk .emoji{font-size:30px}
+
+.status{color:#42d6ae;font-size:12px}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+
+.stat{background:#142943;border-radius:12px;padding:12px}
+
+.stat strong{display:block;font-size:24px}
+
+input,textarea,select{width:100%;padding:13px;margin:7px 0;background:#091a2d;color:white;border:1px solid #45617c;border-radius:10px;font-size:15px}
+
+textarea{min-height:90px}
+
+.primary{width:100%;background:#286db0;margin-top:10px}
+
+.employee,.task{background:#142943;padding:14px;margin:10px 0;border-radius:13px;border:1px solid #34506e}
+
+.employee{display:flex;gap:12px;align-items:center}
+
+.employee .emoji{font-size:30px}
+
+small{color:#9db5d0}
+
+footer{text-align:center;color:#8199b3;padding:25px;font-size:12px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🏢 MANKEONG AI OFFICE</h1>
+
+<p>PLAN · RESEARCH · EXECUTE · GROW</p>
+
+</header>
+
+<main>
+
+<nav>
+
+<button class="active" onclick="tab('office',this)">🏢 办公室</button>
+
+<button onclick="tab('tasks',this)">📋 任务</button>
+
+<button onclick="tab('team',this)">👥 员工</button>
+
+<button onclick="tab('reports',this)">📊 报告</button>
+
+</nav>
+
+<section id="office" class="active">
+
+<div class="panel">
+
+<h2>欢迎回来，老板 👋</h2>
+
+<p>MANKEONG AI OFFICE · KUKUP</p>
+
+<div class="scene" id="scene"></div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat"><strong id="total">0</strong><small>任务总数</small></div>
+
+<div class="stat"><strong>5</strong><small>员工人数</small></div>
+
+<div class="stat"><strong id="done">0</strong><small>已完成</small></div>
+
+</div>
+
+<div class="panel">
+
+<h2>⚡ 快速派发任务</h2>
+
+<textarea id="quick" placeholder="输入工作内容..."></textarea>
+
+<select id="quickOwner"></select>
+
+<button class="primary" onclick="addTask('quick','quickOwner')">派发任务</button>
+
+</div>
+
+</section>
+
+<section id="tasks">
+
+<div class="panel">
+
+<h2>📋 任务管理中心</h2>
+
+<textarea id="taskText" placeholder="输入需要员工完成的任务..."></textarea>
+
+<select id="taskOwner"></select>
+
+<button class="primary" onclick="addTask('taskText','taskOwner')">创建任务</button>
+
+</div>
+
+<div id="taskList"></div>
+
+</section>
+
+<section id="team">
+
+<h2>👥 我的 AI 团队</h2>
+
+<div id="teamList"></div>
+
+</section>
+
+<section id="reports">
+
+<h2>📊 公司报告</h2>
+
+<div class="panel" id="summary">目前没有工作记录。</div>
+
+<div id="reportList"></div>
+
+</section>
+
+<footer>MANKEONG AI OFFICE · VERSION 1.0</footer>
+
+</main>
+
+<script>
+
+const team=[
+
+["Boss","总经理","管理公司、分配任务","👨🏻‍💼"],
+
+["Secretary","秘书","整理文件、管理工作清单","👩🏻‍💻"],
+
+["Researcher","研究员","调查资料、核实信息","🧑🏻‍🔬"],
+
+["Accountant","会计","预算、收入和支出","🧑🏻‍💼"],
+
+["Marketing","市场部","营销策划和宣传","👩🏻‍🎨"]
+
+];
+
+let tasks=[];
+
+try{tasks=JSON.parse(localStorage.getItem("mankeongTasks")||"[]")}catch(e){}
+
+function tab(id,button){
+
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+
+document.getElementById(id).classList.add("active");
+
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+
+button.classList.add("active");
+
+}
+
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function save(){localStorage.setItem("mankeongTasks",JSON.stringify(tasks));render()}
+
+function addTask(textId,ownerId){
+
+let text=document.getElementById(textId).value.trim();
+
+if(!text){alert("请先输入任务内容");return}
+
+tasks.unshift({id:Date.now(),text,owner:document.getElementById(ownerId).value,status:"待处理",date:new Date().toLocaleString()});
+
+document.getElementById(textId).value="";
+
+save();
+
+}
+
+function render(){
+
+document.getElementById("total").textContent=tasks.length;
+
+document.getElementById("done").textContent=tasks.filter(t=>t.status==="已完成").length;
+
+document.getElementById("taskList").innerHTML=tasks.map(t=>`<div class="task"><b>${escapeHTML(t.owner)}</b> · ${t.status}<p>${escapeHTML(t.text)}</p><small>${escapeHTML(t.date)}</small><p><button onclick="complete(${t.id})">✓ 完成</button> <button onclick="removeTask(${t.id})">删除</button></p></div>`).join("")||"<p>目前没有任务。</p>";
+
+document.getElementById("summary").textContent=`总任务：${tasks.length}；已完成：${tasks.filter(t=>t.status==="已完成").length}；待处理：${tasks.filter(t=>t.status!=="已完成").length}。当前是本机演示管理系统，尚未连接真正 AI。`;
+
+document.getElementById("reportList").innerHTML=tasks.filter(t=>t.status==="已完成").map(t=>`<div class="task"><b>${escapeHTML(t.owner)} 已完成</b><p>${escapeHTML(t.text)}</p></div>`).join("");
+
+}
+
+function complete(id){tasks=tasks.map(t=>t.id===id?{...t,status:"已完成"}:t);save()}
+
+function removeTask(id){tasks=tasks.filter(t=>t.id!==id);save()}
+
+team.forEach(x=>{
+
+document.getElementById("scene").innerHTML+=`<div class="desk"><div class="emoji">${x[3]}</div><b>${x[0]}</b><p>${x[1]}</p><span class="status">● 在线待命</span></div>`;
+
+document.getElementById("teamList").innerHTML+=`<div class="employee"><div class="emoji">${x[3]}</div><div><b>${x[0]}</b><p>${x[1]}</p><small>${x[2]}</small></div></div>`;
+
+["quickOwner","taskOwner"].forEach(id=>document.getElementById(id).innerHTML+=`<option>${x[0]}</option>`);
+
+});
+
+render();
+
+</script>
+
+</body>
+
+</html>
