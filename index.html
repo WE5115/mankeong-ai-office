@@ -1,21 +1,340 @@
-🏢 MANKEONG AI OFFICE
-规划 · 研究 · 执行 · 成长
-🏢 办公室
-📋 任务
-👥 员工
-🔎 研究
-📊 报告
-欢迎回来，老板 👋
-MANKEONG AI OFFICE · KUKUP
-0
-任务总数
-0
-进行中
-0
-已完成
-⚡ 快速派发任务
 
-派发任务
-📌 最近任务
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#081426">
+<title>MANKEONG AI OFFICE</title>
+<style>
+:root{color-scheme:dark;--bg:#081426;--head:#10233b;--panel:#142943;--card:#203d5d;--line:#34506e;--blue:#286db0;--muted:#9db5d0;--green:#42d6ae}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;width:100%;overflow-x:hidden}
+body{background:var(--bg);color:#eef5ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+header{padding:22px 16px;background:var(--head);border-bottom:1px solid var(--line)}
+header h1{font-size:clamp(19px,5vw,25px);margin:0;line-height:1.35;overflow-wrap:anywhere}
+header p{color:var(--muted);font-size:12px;letter-spacing:1px;margin:8px 0 0}
+main{width:min(100%,760px);margin:0 auto;padding:14px}
+nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+button{min-width:0;background:#193552;color:white;border:1px solid #42617e;border-radius:12px;padding:12px 5px;font-weight:700;font-size:13px;cursor:pointer;overflow-wrap:anywhere}
+button.active{background:#2365a0}
+section{display:none;margin-top:18px}
+section.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;min-width:0}
+h2{font-size:20px;line-height:1.4;margin:0 0 12px}
+.scene{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.desk{background:var(--card);border:1px solid #54718e;border-radius:13px;padding:13px;text-align:center;min-width:0;overflow-wrap:anywhere}
+.desk .emoji,.employee .emoji{font-size:28px}
+.status{color:var(--green);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.stat{background:var(--panel);border-radius:12px;padding:12px;min-width:0}
+.stat strong{display:block;font-size:24px}
+.stat small{color:var(--muted)}
+input,textarea,select{display:block;width:100%;max-width:100%;padding:13px;margin:7px 0;background:#091a2d;color:white;border:1px solid #45617c;border-radius:10px;font-size:15px}
+textarea{min-height:100px;resize:vertical}
+.primary{width:100%;background:var(--blue);margin-top:10px;padding:14px}
+.employee,.task{background:var(--panel);padding:14px;margin:10px 0;border-radius:13px;border:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+.employee{display:flex;gap:12px;align-items:center}
+.employee p{margin:5px 0}
+.employee small,small,.muted{color:var(--muted)}
+.task-top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{font-size:12px;padding:5px 9px;border-radius:20px;background:#294663;color:#cfe2f8}
+.task-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.task-actions button{flex:1;min-width:90px}
+.danger{background:#512d3a;border-color:#875064}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+.result{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;background:#091a2d;border:1px solid #45617c;border-radius:12px;padding:14px;margin-top:12px}
+.source-list a{color:#8fc5ff;overflow-wrap:anywhere}
+.source-list li{margin:8px 0}
+.notice{font-size:12px;color:var(--muted);line-height:1.6}
+footer{text-align:center;color:#8199b3;padding:25px 10px;font-size:12px}
+@media(max-width:430px){
+main{padding:10px}
+nav{gap:4px}
+nav button{font-size:11px;padding:11px 2px;border-radius:10px}
+.panel{padding:13px}
+.scene{grid-template-columns:1fr 1fr}
+}
+@media(max-width:350px){
+nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+.filters{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>🏢 MANKEONG AI OFFICE</h1>
+<p>规划 · 研究 · 执行 · 成长</p>
+</header>
+<main>
+<nav>
+<button class="active" data-tab="office" onclick="tab('office',this)">🏢 办公室</button>
+<button data-tab="tasks" onclick="tab('tasks',this)">📋 任务</button>
+<button data-tab="team" onclick="tab('team',this)">👥 员工</button>
+<button data-tab="research" onclick="tab('research',this)">🔎 研究</button>
+<button data-tab="reports" onclick="tab('reports',this)">📊 报告</button>
+</nav>
 
-MANKEONG AI OFFICE · VERSION 3.0
+<section id="office" class="active">
+<div class="panel">
+<h2>欢迎回来，老板 👋</h2>
+<p>MANKEONG AI OFFICE · KUKUP</p>
+<div class="scene" id="scene"></div>
+</div>
+<div class="stats">
+<div class="stat"><strong id="total">0</strong><small>任务总数</small></div>
+<div class="stat"><strong id="doing">0</strong><small>进行中</small></div>
+<div class="stat"><strong id="done">0</strong><small>已完成</small></div>
+</div>
+<div class="panel">
+<h2>⚡ 快速派发任务</h2>
+<textarea id="quick" placeholder="例如：整理本周工作重点"></textarea>
+<select id="quickOwner"></select>
+<button class="primary" onclick="addTask('quick','quickOwner')">派发任务</button>
+</div>
+<div class="panel">
+<h2>📌 最近任务</h2>
+<div id="recentTasks"></div>
+</div>
+</section>
+
+<section id="tasks">
+<div class="panel">
+<h2>📋 任务管理中心</h2>
+<textarea id="taskText" placeholder="输入需要员工完成的任务..."></textarea>
+<select id="taskOwner"></select>
+<button class="primary" onclick="addTask('taskText','taskOwner')">＋ 创建任务</button>
+</div>
+<div class="filters">
+<select id="filterStatus" onchange="render()">
+<option value="全部">全部状态</option>
+<option>待处理</option>
+<option>进行中</option>
+<option>已完成</option>
+</select>
+<select id="filterOwner" onchange="render()">
+<option value="全部">全部员工</option>
+</select>
+</div>
+<div id="taskList"></div>
+</section>
+
+<section id="team">
+<h2>👥 我的 AI 团队</h2>
+<div id="teamList"></div>
+</section>
+
+<section id="research">
+<div class="panel">
+<h2>🔎 Researcher · 网络研究员</h2>
+<p class="notice">输入研究主题，系统会请求你的 Cloudflare Worker，再由 Gemini 生成中文研究结果。请核对报告中的来源与日期。</p>
+<textarea id="researchTask" maxlength="1500" placeholder="例如：调查马来西亚2026年小型餐饮业的市场趋势、成本与机会"></textarea>
+<button class="primary" id="researchBtn" onclick="runResearch()">开始研究</button>
+<div id="researchStatus" class="notice" aria-live="polite"></div>
+<div id="researchAnswer" class="result" hidden></div>
+<ol id="researchSources" class="source-list"></ol>
+</div>
+</section>
+
+<section id="reports">
+<h2>📊 公司报告</h2>
+<div class="panel" id="summary">目前没有工作记录。</div>
+<div id="reportList"></div>
+</section>
+
+<footer>MANKEONG AI OFFICE · VERSION 3.0</footer>
+</main>
+
+<script>
+const API_URL='https://mankeong-ai-office-api.ngmankeong255.workers.dev/api/research';
+
+const team=[
+['Boss','总经理','管理公司、分配任务','👨🏻‍💼'],
+['Secretary','秘书','整理文件、记录事项、管理工作清单','👩🏻‍💻'],
+['Researcher','研究员','调查资料、网络研究、核实信息','🧑🏻‍🔬'],
+['Accountant','会计','预算、收入、支出和财务','🧑🏻‍💼'],
+['Marketing','市场部','营销策划、宣传和客户分析','👩🏻‍🎨']
+];
+
+let tasks=[];
+
+try{
+const saved=JSON.parse(localStorage.getItem('mankeongTasks')||'[]');
+tasks=Array.isArray(saved)?saved.map(t=>({...t,status:['待处理','进行中','已完成'].includes(t.status)?t.status:'待处理'})):[];
+}catch(e){tasks=[]}
+
+function tab(id,button){
+document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+button.classList.add('active');
+render();
+}
+
+function escapeHTML(s){
+return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function save(){
+try{localStorage.setItem('mankeongTasks',JSON.stringify(tasks))}
+catch(e){alert('手机储存空间不足，任务暂时无法保存。')}
+render();
+}
+
+function addTask(textId,ownerId){
+const input=document.getElementById(textId);
+const text=input.value.trim();
+if(!text){alert('请先输入任务内容');return}
+tasks.unshift({
+id:Date.now()+Math.floor(Math.random()*1000),
+text,
+owner:document.getElementById(ownerId).value,
+status:'待处理',
+date:new Date().toLocaleString('zh-MY')
+});
+input.value='';
+save();
+alert('任务已派发！');
+}
+
+function changeStatus(id){
+tasks=tasks.map(t=>{
+if(t.id!==id)return t;
+const next={'待处理':'进行中','进行中':'已完成','已完成':'待处理'};
+return {...t,status:next[t.status]||'待处理'};
+});
+save();
+}
+
+function removeTask(id){
+if(!confirm('确定删除这项任务吗？'))return;
+tasks=tasks.filter(t=>t.id!==id);
+save();
+}
+
+function taskHTML(t){
+const next={'待处理':'开始任务','进行中':'标记完成','已完成':'重新开启'};
+return `<div class="task">
+<div class="task-top"><b>${escapeHTML(t.owner)}</b><span class="pill">${escapeHTML(t.status)}</span></div>
+<p>${escapeHTML(t.text)}</p>
+<small>${escapeHTML(t.date||'旧任务')}</small>
+<div class="task-actions">
+<button onclick="changeStatus(${Number(t.id)})">${next[t.status]||'更新状态'}</button>
+<button class="danger" onclick="removeTask(${Number(t.id)})">删除</button>
+</div>
+</div>`;
+}
+
+function render(){
+const count=s=>tasks.filter(t=>t.status===s).length;
+document.getElementById('total').textContent=tasks.length;
+document.getElementById('doing').textContent=count('进行中');
+document.getElementById('done').textContent=count('已完成');
+
+const status=document.getElementById('filterStatus').value;
+const owner=document.getElementById('filterOwner').value;
+
+const filtered=tasks.filter(t=>
+(status==='全部'||t.status===status)&&
+(owner==='全部'||t.owner===owner)
+);
+
+document.getElementById('taskList').innerHTML=
+filtered.map(taskHTML).join('')||
+'<div class="empty">没有符合条件的任务。</div>';
+
+document.getElementById('recentTasks').innerHTML=
+tasks.slice(0,3).map(taskHTML).join('')||
+'<div class="empty">目前还没有任务，老板可以在这里快速派发。</div>';
+
+const completed=tasks.filter(t=>t.status==='已完成');
+
+document.getElementById('summary').textContent=
+`总任务：${tasks.length}；待处理：${count('待处理')}；进行中：${count('进行中')}；已完成：${completed.length}。完成率：${tasks.length?Math.round(completed.length/tasks.length*100):0}%。`;
+
+document.getElementById('reportList').innerHTML=
+completed.map(t=>`<div class="task"><b>${escapeHTML(t.owner)} · 已完成</b><p>${escapeHTML(t.text)}</p><small>${escapeHTML(t.date||'')}</small></div>`).join('')||
+'<div class="empty">还没有已完成的任务。</div>';
+}
+
+team.forEach(x=>{
+document.getElementById('scene').insertAdjacentHTML('beforeend',
+`<div class="desk"><div class="emoji">${x[3]}</div><b>${x[0]}</b><p>${x[1]}</p><span class="status">● 在线待命</span></div>`);
+
+document.getElementById('teamList').insertAdjacentHTML('beforeend',
+`<div class="employee"><div class="emoji">${x[3]}</div><div><b>${x[0]}</b><p>${x[1]}</p><small>${x[2]}</small></div></div>`);
+
+['quickOwner','taskOwner'].forEach(id=>
+document.getElementById(id).insertAdjacentHTML('beforeend',`<option>${x[0]}</option>`));
+
+document.getElementById('filterOwner').insertAdjacentHTML('beforeend',
+`<option>${x[0]}</option>`);
+});
+
+async function runResearch(){
+const input=document.getElementById('researchTask');
+const status=document.getElementById('researchStatus');
+const answer=document.getElementById('researchAnswer');
+const sources=document.getElementById('researchSources');
+const button=document.getElementById('researchBtn');
+const task=input.value.trim();
+
+if(!task){alert('请先输入研究主题');return}
+
+button.disabled=true;
+button.textContent='研究中…';
+status.textContent='正在连接研究员，请稍候…';
+answer.hidden=true;
+answer.textContent='';
+sources.innerHTML='';
+
+try{
+const response=await fetch(API_URL,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({task})
+});
+
+const data=await response.json();
+
+if(!response.ok||!data.ok){
+throw new Error(data.error||data.message||`请求失败（${response.status}）`);
+}
+
+answer.textContent=data.answer||data.result||'研究员没有返回文字内容。';
+answer.hidden=false;
+
+const list=Array.isArray(data.sources)?data.sources:[];
+
+sources.innerHTML=list.map(s=>{
+const url=typeof s==='string'?s:(s.url||s.uri||'');
+const title=typeof s==='string'?s:(s.title||url);
+
+if(!url)return `<li>${escapeHTML(title)}</li>`;
+
+let safe='';
+try{
+const u=new URL(url);
+if(u.protocol==='https:'||u.protocol==='http:')safe=u.href;
+}catch(e){}
+
+return safe
+?`<li><a href="${escapeHTML(safe)}" target="_blank" rel="noopener noreferrer">${escapeHTML(title)}</a></li>`
+:`<li>${escapeHTML(title)}</li>`;
+}).join('');
+
+status.textContent=`研究完成 · ${data.model||'Gemini'} · 请核实来源与时效。`;
+
+}catch(e){
+status.textContent='研究请求失败：'+e.message+'。请检查 Worker 与 Gemini 设置。';
+}finally{
+button.disabled=false;
+button.textContent='开始研究';
+}
+}
+
+render();
+</script>
+</body>
+</html>
